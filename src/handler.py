@@ -27,7 +27,6 @@ def process_hire_date(date):
     try:
         _date = parse(date.strip())
     except(Exception):
-        # This would normally be logged
         response_body["errors"].append(f"{date}: is not a valid date")
         return None
 
@@ -42,11 +41,13 @@ def process_salary(salary):
     try:
         if isinstance(salary, str):
             _salary = salary.strip()
+
             if _salary == "":
                 return ""
+
             _salary = int(_salary)
         # Since everything is from a CSV the two cases below should not be
-        # possible but are other accounting for if the input ever changed
+        # possible
         elif isinstance(salary, int):
             return _salary
         else:
@@ -149,8 +150,10 @@ def create_user(name, email, manager_id, salary, hire_date):
     # This check allows us to determine if data was invalid or blank
     if salary == "":
         salary = None
+
     if manager_id == "":
         manager_id = None
+
     if hire_date == "":
         hire_date = None
 
@@ -263,7 +266,7 @@ def get_chain_of_command(manager_id):
     return result
 
 
-def search_csv_for_manager(reader, manager_id):
+def search_csv_for_manager(reader, manager_email):
     '''
         Searches the CSV for a undefined manager and creates a skeleton of the
         user and returns the new user's object Id. This new record will be
@@ -275,15 +278,16 @@ def search_csv_for_manager(reader, manager_id):
     # refactoring of how we process each line's data to allow this to
     # become recursive. As a situation could arise where we need to create
     # a manager for this and follow path until we reach the last manager.
-    manager_id = manager_id.lower().strip()
+    _email = manager_email.lower().strip()
 
     for line in reader:
-        manager = line["Manager"].lower().strip()
+        _manager_email = line["Manager"].lower().strip()
+
         # Creating a basic user that will be updated later
-        if manager == manager_id:
+        if _manager_email == _email:
             user = {
                 "name": "",
-                "normalized_email": manager_id,
+                "normalized_email": _email,
                 "manager_id": None,
                 "salary": None,
                 "hire_date": None,

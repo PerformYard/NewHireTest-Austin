@@ -297,7 +297,7 @@ Joe Book,jbook@performyard.com,,,02/10/2010
 
 
 @dummy_data_decorator
-def test_valid_user_email():
+def test_validate_user_email():
     '''
         This test should create 1 user and have 2 errors due to user email
     '''
